@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>indigo_restful_api</strong></big></big> (version 0.50, 2010-08-09)</font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/Ben/DropBox/Indigo Restful API/indigo_restful_api.py">/Users/Ben/DropBox/Indigo Restful API/indigo_restful_api.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/Ben/Dropbox/Indigo Restful API/indigo_restful_api.py">/Users/Ben/Dropbox/Indigo Restful API/indigo_restful_api.py</a></font></td></tr></table>
     <p><tt>Python&nbsp;Wrapper&nbsp;for&nbsp;the&nbsp;Restful&nbsp;API&nbsp;for&nbsp;the&nbsp;Indigo&nbsp;Server.</tt></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -17,9 +17,11 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="os.html">os</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="xml.etree.ElementTree.html">xml.etree.ElementTree</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
 </td><td width="25%" valign=top><a href="urllib.html">urllib</a><br>
-</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+</td><td width="25%" valign=top><a href="urllib2.html">urllib2</a><br>
+</td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -80,7 +82,9 @@ Inputs&nbsp;-<br>
 Outputs&nbsp;-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None</tt></dd></dl>
 
-<dl><dt><a name="Indigo_Restful_Server-fetch_devices_from_indigo"><strong>fetch_devices_from_indigo</strong></a>(self, ignore_filter<font color="#909090">=['']</font>)</dt><dd><tt>Inputs:&nbsp;<br>
+<dl><dt><a name="Indigo_Restful_Server-fetch_devices_from_indigo"><strong>fetch_devices_from_indigo</strong></a>(self, ignore_filter<font color="#909090">=['']</font>)</dt><dd><tt>Depreciated,&nbsp;do&nbsp;not&nbsp;use.<br>
+&nbsp;<br>
+Inputs:&nbsp;<br>
 &nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ignore_filter&nbsp;-&nbsp;the&nbsp;Insteon&nbsp;or&nbsp;X10&nbsp;addresses&nbsp;to&nbsp;filter&nbsp;out&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
 &nbsp;<br>
@@ -93,11 +97,13 @@ Outputs:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Depending&nbsp;on&nbsp;the&nbsp;device,&nbsp;this&nbsp;data&nbsp;will&nbsp;be&nbsp;different&nbsp;(eg,&nbsp;The&nbsp;Thermostat&nbsp;Adapter&nbsp;will&nbsp;not&nbsp;have&nbsp;the&nbsp;same&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;that&nbsp;an&nbsp;ApplianceLinc&nbsp;has.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-This&nbsp;will&nbsp;eventually&nbsp;need&nbsp;a&nbsp;rewrite,&nbsp;since&nbsp;this&nbsp;was&nbsp;adapted&nbsp;from&nbsp;single&nbsp;use&nbsp;code&nbsp;that&nbsp;I&nbsp;wrote...</tt></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Replaced&nbsp;by&nbsp;get_device_by_name,&nbsp;and&nbsp;get_device_list.</tt></dd></dl>
 
 <dl><dt><a name="Indigo_Restful_Server-fetch_web_page"><strong>fetch_web_page</strong></a>(self, web_url)</dt><dd><tt>Wrapper&nbsp;around&nbsp;the&nbsp;urllib.urlopen&nbsp;call,&nbsp;that&nbsp;reads&nbsp;the&nbsp;web_url.&nbsp;&nbsp;<br>
 &nbsp;<br>
 Intended&nbsp;for&nbsp;Internal&nbsp;use&nbsp;only.</tt></dd></dl>
+
+<dl><dt><a name="Indigo_Restful_Server-fetch_xml_page"><strong>fetch_xml_page</strong></a>(self, url_to_open)</dt></dl>
 
 <dl><dt><a name="Indigo_Restful_Server-get_actiongroup_by_name"><strong>get_actiongroup_by_name</strong></a>(self, action_name)</dt><dd><tt>Inputs:<br>
 &nbsp;<br>
@@ -121,6 +127,26 @@ Outputs:<br>
 Inputs&nbsp;-&nbsp;None<br>
 Output&nbsp;-&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;Action&nbsp;Group&nbsp;names</tt></dd></dl>
 
+<dl><dt><a name="Indigo_Restful_Server-get_device_by_name"><strong>get_device_by_name</strong></a>(self, device_name)</dt><dd><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Inputs:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;device_name&nbsp;-&nbsp;The&nbsp;device&nbsp;Name&nbsp;to&nbsp;retrieve<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Outputs:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dictionary&nbsp;containing&nbsp;the&nbsp;data&nbsp;from&nbsp;the&nbsp;device<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;in&nbsp;the&nbsp;Dictionary&nbsp;is&nbsp;dependant&nbsp;on&nbsp;the&nbsp;type&nbsp;of&nbsp;the&nbsp;device<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(eg,&nbsp;The&nbsp;Thermostat&nbsp;Adapter&nbsp;will&nbsp;not&nbsp;have&nbsp;the&nbsp;same&nbsp;data&nbsp;that&nbsp;an&nbsp;ApplianceLinc&nbsp;has.)<br>
+&nbsp;<br>
+Replaces&nbsp;Fetch&nbsp;Devices&nbsp;from&nbsp;Indigo.</tt></dd></dl>
+
+<dl><dt><a name="Indigo_Restful_Server-get_device_list"><strong>get_device_list</strong></a>(self)</dt><dd><tt>Retrieve&nbsp;the&nbsp;list&nbsp;of&nbsp;variables.<br>
+&nbsp;<br>
+Inputs&nbsp;-&nbsp;None<br>
+Output&nbsp;-&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;variable&nbsp;names</tt></dd></dl>
+
+<dl><dt><a name="Indigo_Restful_Server-get_insteon_links"><strong>get_insteon_links</strong></a>(self)</dt></dl>
+
 <dl><dt><a name="Indigo_Restful_Server-get_variable_by_name"><strong>get_variable_by_name</strong></a>(self, variable_name)</dt><dd><tt>Inputs:<br>
 &nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variable_name&nbsp;-&nbsp;The&nbsp;variable&nbsp;Name&nbsp;to&nbsp;retrieve<br>
@@ -131,7 +157,7 @@ Outputs:<br>
 &nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifically:<br>
 &nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;-&nbsp;is&nbsp;the&nbsp;variable&nbsp;Name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;-&nbsp;is&nbsp;the&nbsp;variable&nbsp;Name<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;-&nbsp;The&nbsp;value&nbsp;that&nbsp;is&nbsp;contained&nbsp;in&nbsp;the&nbsp;variable<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;readonly&nbsp;-&nbsp;Can&nbsp;the&nbsp;variable&nbsp;be&nbsp;modified&nbsp;(presumably&nbsp;internal&nbsp;use&nbsp;of&nbsp;Indigo&nbsp;Only?)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;isfalse&nbsp;-&nbsp;Internal&nbsp;Use&nbsp;of&nbsp;Indigo&nbsp;Only?&nbsp;&nbsp;(Is&nbsp;the&nbsp;variable&nbsp;false?)<br>
@@ -233,6 +259,26 @@ Inputs:<br>
 Output:<br>
 &nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Indigo_Restful_Server-set_thermostat_fan_mode"><strong>set_thermostat_fan_mode</strong></a>(device_name<font color="#909090">=None</font>, mode<font color="#909090">=0</font>)</dt><dd><tt>Set&nbsp;an&nbsp;thermostat&nbsp;Fan&nbsp;mode.<br>
+&nbsp;<br>
+Input&nbsp;-&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;device_name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;thermostat&nbsp;device&nbsp;name&nbsp;(eg.&nbsp;Furnace_link)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;mode&nbsp;to&nbsp;set&nbsp;the&nbsp;device&nbsp;to:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Automatic&nbsp;Mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Always&nbsp;On<br>
+&nbsp;<br>
+Output&nbsp;-&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Indigo_Restful_Server-set_thermostat_heating_mode"><strong>set_thermostat_heating_mode</strong></a>(device_name<font color="#909090">=None</font>, mode<font color="#909090">=0</font>)</dt><dd><tt>Set&nbsp;an&nbsp;thermostat&nbsp;heating&nbsp;/&nbsp;cooling&nbsp;mode.<br>
+&nbsp;<br>
+Input&nbsp;-&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;device_name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;thermostat&nbsp;device&nbsp;name&nbsp;(eg.&nbsp;Furnace_link)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;mode&nbsp;to&nbsp;set&nbsp;the&nbsp;device&nbsp;to:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Automatic&nbsp;Mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Cool&nbsp;On<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Output&nbsp;-&nbsp;None</tt></dd></dl>
 
 <dl><dt><a name="Indigo_Restful_Server-set_variable_by_name"><strong>set_variable_by_name</strong></a>(self, variable_name, new_value<font color="#909090">=0</font>)</dt><dd><tt>Set&nbsp;a&nbsp;variable's&nbsp;value.<br>
 &nbsp;<br>
