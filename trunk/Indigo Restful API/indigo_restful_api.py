@@ -5,6 +5,7 @@ import os
 import os.path
 import urllib
 import urllib2
+from urllib2 import (HTTPPasswordMgrWithDefaultRealm, HTTPBasicAuthHandler, build_opener, install_opener, urlopen, HTTPError)
 #from BeautifulSoup import BeautifulStoneSoup          # For processing XML
 import xml.etree.ElementTree as ElementTree
 # This uses the BeautifulSoup HTML/XML parser, see http://www.crummy.com/software/BeautifulSoup/
@@ -50,10 +51,19 @@ class 	Indigo_Restful_Server (object):
 				Inputs - None
 				Outputs - None
 			"""
-			self.x10_devices = {}
-			self.insteon_devices = {}
+			self.cached_x10_device_names = {}
+			self.cached_insteon_device_names = {}
 			self.server_address = ""
+			self.password_mgr = None
+			self.username = None
+			self.password = None
 
+
+		#*******************************************************************************************
+		#	Server Related
+		#
+		#
+			
 		def	set_server ( self, server_address):
 			"""
 				Stores the server address, for use by the API/Wrapper.
@@ -68,72 +78,47 @@ class 	Indigo_Restful_Server (object):
 			"""
 			self.server_address = server_address
 			
+		def	set_server_authentication ( self, username, password):
+			"""
+				Configure urllib2 to use the username and password that is passed into this function.
+				Only needed if Indigo is setup to use password authentication.
+			"""
+			self.password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+			self.username = username
+			self.password = password
+			self.password_mgr.add_password(None, self.server_address, self.username, self.password)
+			self.handler = urllib2.HTTPDigestAuthHandler( self.password_mgr)
+			self.opener = build_opener( self.handler)
+			try:
+				self.opener ( self.server_address )
+			except:
+				pass
+			urllib2.install_opener( self.opener )
+
 			
 		def	fetch_web_page ( self, web_url):
 			"""Wrapper around the urllib.urlopen call, that reads the web_url.  
 			
 			Intended for Internal use only.
 			"""
-			web_page = urllib.urlopen ( web_url ).readlines()
+			web_page = urllib2.urlopen ( web_url )
+			web_page = web_page.readlines()
 			return web_page
 
 		def		fetch_xml_page (self, url_to_open ):
+			"""Wrapper around the urllib.urlopen call, that reads the web_url.  
+			
+			Intended for Internal use only.
+			"""
 			url 		= urllib2.Request (url=url_to_open, data=None)
 			url_pointer = urllib2.urlopen ( url )
 			tree = ElementTree.parse (url_pointer )
 			return tree
 
-		def		map_device_to_dict ( self, web_data ):
-			"""This is used in the conversion of the text based devicelist call, to create the 
-			dictionary of values.
-			
-			Input - text version of a device
-			
-			Output - a Dictionary built with the field name / values for the device.
-
-			This is depreciated, and will be eliminated after rewriting the fetch_devicelist call.
-			"""
-			datadict = {}
-			for x in web_data:
-				field, data = x.split (":",1)
-				field = field.strip()
-				datadict [field] = data.strip()
-			return datadict
-
-		def		return_device_from_x10_addr ( self, devdict):
-			"""This will return a device dictionary from an X10 address.
-			
-			Input -
-						devdict - A dictionary of X10 devices (to search through)
-						
-			Output - 
-						The device that matches the address, or None
-						
-			Needs rewrite, this should search the self instance.
-			(This is used by the fetch_devicelist function)
-			"""
-			if len(devdict["addressStr"]) < 3:
-				return devdict["addressStr"]
-			else:
-				return None
-				
-		def		return_device_from_insteonaddr (self, devdict ):
-			"""This will return a device dictionary from an insteon address.
-			
-			Input -
-						devdict - A dictionary of insteon devices (to search through)
-						
-			Output - 
-						The device that matches the address, or None
-						
-			Needs rewrite, this should search the self instance.
-			(This is used by the fetch_devicelist function)
-			"""
-			if devdict["addressStr"].find (".") > 1:
-				return devdict["addressStr"]
-			return None
-
-
+		#*******************************************************************************************
+		#	Device Related
+		#
+		#
 		def		return_device_type ( self, devdict ):
 			"""This will return the devices Type.
 			
@@ -179,11 +164,7 @@ class 	Indigo_Restful_Server (object):
 				The Logic is that Insteon addresses are more than 3 characters long.
 			"""
 			return len(addrstr) < 3
-		
-		#
-		#	Device Related
-		#
-		#
+
 		def		return_device_from_addrstr ( self, addrstr):
 			"""		
 				Inputs:
@@ -199,13 +180,13 @@ class 	Indigo_Restful_Server (object):
 			
 				If not found/matched, then a NONE will be returned.
 			"""
-			for x in self.insteon_devices:
-				if addrstr.strip().upper() == x["addrStr"]:
-					return x
-			for x in self.x10_devices:
-				if addrstr.strip().upper() == x["addrStr"]:
-					return x
+			device_list = self.get_device_list()
+			for x in device_list:
+				device_info = self.get_device_by_name ( x )
+				if device_info [ "addressStr"].strip().upper() == addrstr.strip().upper():
+					return device_info
 			return None
+			
 
 		def		get_device_list ( self ):
 			""" Retrieve the list of variables.
@@ -221,6 +202,9 @@ class 	Indigo_Restful_Server (object):
 				data [subnode.text] = self.server_address+'%s' % subnode.get ('href')
 			return data
 
+		def		URL_encode ( self, raw):
+			return urllib.quote ( raw.replace (" ", "%20"), "%" )
+			
 		def		get_device_by_name ( self, device_name):
 			"""
 				Inputs:
@@ -237,47 +221,14 @@ class 	Indigo_Restful_Server (object):
 			Replaces Fetch Devices from Indigo.
 			"""
 			data = {}
-			devices_xml = self.fetch_xml_page (self.server_address + r"/devices/%s.xml" % device_name.replace(" ", "%20")  )
+			devices_xml = self.fetch_xml_page (self.server_address + r"/devices/%s.xml" % self.URL_encode (device_name)  )
 			root = devices_xml.getroot()
 			for node in root.getiterator():
-				data [ node.tag] = node.text.strip()
+				if node.text <> None:
+					data [ node.tag] = node.text.strip()
+				else:
+					data [ node.tag ] = node.text
 			return data
-
-
-		def		fetch_devices_from_indigo (self, ignore_filter=["",]):
-			"""
-				Depreciated, do not use.
-				
-				Inputs: 
-			
-					ignore_filter - the Insteon or X10 addresses to filter out	
-			
-				Outputs:
-			
-					None, populates the insteon_devices & x10_devices of the Indigo_Restful_Server object. 
-					The insteon_devices & x10_devices are a list of device dictionarys.  The dictionary contains the
-					device data from the server.
-			
-					Depending on the device, this data will be different (eg, The Thermostat Adapter will not have the same 
-					data that an ApplianceLinc has.
-					
-					Replaced by get_device_by_name, and get_device_list.
-					"""
-			devices = self.fetch_web_page ( self.server_address + r"/devices.txt/")
-			
-			for x in devices:
-				device_data = self.fetch_web_page (self.server_address + x.replace(" ", "%20"))
-				device_data = self.map_device_to_dict ( device_data)
-				if self.return_device_from_insteonaddr ( device_data) <> None:
-					if not(self.return_device_type(device_data) in ignore_filter):
-#						print "Adding (insteon) ", device_data["name"]
-						self.insteon_devices [device_data["name"]] = device_data#insteon_devices.append ( device_data)
-						
-				if self.return_device_from_x10_addr ( device_data) <> None:
-					if not(self.return_device_type(device_data) in ignore_filter):
-#						print "Adding (x10) ", device_data["name"]
-						self.x10_devices [device_data["name"]] = device_data
-				
 
 		def		change_device_state_by_name ( self, device_name, status = 1):
 			"""Change the state (On/Off), of an device.
@@ -292,7 +243,7 @@ class 	Indigo_Restful_Server (object):
 			Outputs -
 						None
 			"""
-			self.fetch_web_page ( self.server_address + r"/devices/%s?isOn=%i&_method=put" % (device_name.replace(" ", "%20"), status) )
+			self.fetch_web_page ( self.server_address + r"/devices/%s?isOn=%i&_method=put" % (self.URL_encode ( device_name ), status) )
 
 		def		toggle_device_state_by_name ( self, device_name):
 			"""Toggle the state (On/Off), of an device.  If the device is on, it will be turned off, and vice versa. 
@@ -307,7 +258,7 @@ class 	Indigo_Restful_Server (object):
 			Note: Toggle relies on Indigo being at least v4.11.  The Toggle functionality in the restful interface 
 			was added in v4.11.
 			"""
-			self.fetch_web_page ( self.server_address + r"/devices/%s?toggle=1&_method=put" % device_name.replace(" ", "%20") )
+			self.fetch_web_page ( self.server_address + r"/devices/%s?toggle=1&_method=put" % self.URL_encode ( device_name ) )
 			
 		def		change_brightness_state_by_name ( self, device_name, brightness = 100):
 			"""Change the brightness of an LampLinc (or equivalent).
@@ -324,7 +275,7 @@ class 	Indigo_Restful_Server (object):
 			Outputs -
 						None
 			"""
-			self.fetch_web_page ( self.server_address + r"/devices/%s?brightness=%i&_method=put" % (device_name.replace(" ", "%20"), brightness) )
+			self.fetch_web_page ( self.server_address + r"/devices/%s?brightness=%i&_method=put" % (self.URL_encode ( device_name ), brightness) )
 
 
 		def		set_thermostat_heating_mode ( device_name=None, mode = 0):
@@ -343,7 +294,7 @@ class 	Indigo_Restful_Server (object):
 			elif mode == 1:
 				new_value = "cool on"
 			
-			self.fetch_web_page ( self.server_address + r"/devices/%s?_method=put&hvacCurrentMode=%s" % (device_name.replace(" ", "%20"), new_value.replace(" ", "%20")) )
+			self.fetch_web_page ( self.server_address + r"/devices/%s?_method=put&hvacCurrentMode=%s" % (self.URL_encode ( device_name ), new_value.replace(" ", "%20")) )
 
 		def		set_thermostat_fan_mode ( device_name=None, mode = 0):
 			"""Set an thermostat Fan mode.
@@ -361,7 +312,24 @@ class 	Indigo_Restful_Server (object):
 			elif mode == 1:
 				new_value = "always on"
 			
-			self.fetch_web_page ( self.server_address + r"/devices/%s?_method=put&hvacCurrentMode=%s" % (device_name.replace(" ", "%20"), new_value.replace(" ", "%20") ) )
+			self.fetch_web_page ( self.server_address + r"/devices/%s?_method=put&hvacCurrentMode=%s" % (self.URL_encode ( device_name ), new_value.replace(" ", "%20") ) )
+
+		def		set_thermostat_setpoints ( device_name=None, Heat = 0, Cool = 0):
+			"""Set an thermostat Heating & Cooling Break Points
+			
+			Input - 
+					device_name 	- The thermostat device name (eg. Furnace_link)
+					Heat			- Value to set the heating setpoint to
+					Cool			- Value to set the Cooling setpoint to
+
+					Normally Heat & Cool would be set to a number (eg. 68), but up & dn are usable.
+					
+						up - up one degree
+						dn - down one degree
+			Output - None
+			"""
+			self.fetch_web_page ( self.server_address + r"/devices/%s_method=put&setpointCool=%s&setpointHeat=%s" % (self.URL_encode ( device_name ), Cool, Heat ) )
+
 
 
 		#*******************************************************************************************
@@ -398,6 +366,11 @@ class 	Indigo_Restful_Server (object):
 				data [subnode.text] = self.server_address+'%s' % subnode.get ('href')
 			return data
 
+		#*******************************************************************************************
+		#	action group Related
+		#
+		#
+		
 
 		def		get_actiongroup_list ( self ):
 			""" Retrieve the list of Action Groups.
@@ -436,7 +409,11 @@ class 	Indigo_Restful_Server (object):
 			devices_xml = self.fetch_xml_page (self.server_address + r"/actions/%s.xml" % action_name.replace(" ", "%20")  )
 			root = devices_xml.getroot()
 			for node in root.getiterator():
-				data [ node.tag] = node.text.strip()
+				if node.text <> None:
+					data [ node.tag] = node.text.strip()
+				else:
+					data [ node.tag] = node.text
+					
 
 			return data
 
@@ -451,9 +428,9 @@ class 	Indigo_Restful_Server (object):
 			"""
 			self.fetch_web_page ( self.server_address + r"/actions/%s?_method=execute" % actiongroup_name.replace(" ", "%20") )
 
-	#
-	#
+	#*******************************************************************************************
 	#	Variable Related
+	#
 	#
 			
 		def		get_variable_by_name ( self, variable_name):
@@ -482,25 +459,48 @@ class 	Indigo_Restful_Server (object):
 				data [ node.tag] = node.text.strip()
 			return data
 				
+		#*******************************************************************************************
+		#	Insteon Links Related
+		#
+		#
 		
 		def		get_insteon_links ( self ):
+			"""
+				Inputs:
+			
+					None
+			
+				Outputs:
+			
+					Dictionary - The index is the device's human readable name (eg. "Bed Room Light").
+									The dictionary entry contains a list of the devices addresses 
+									that are linked to the device.
+									
+				For example:
+				
+				{	'Rec Room RemoteLinc': ['01.43.6A', '04.94.44', '14.1C.EB', '01.43.6A', '04.94.44', 
+											'14.1C.EB', '04.94.44', '01.43.6A', '14.1C.EB', '13.AD.96', 
+											'13.AD.96', '13.AD.96', '13.AD.96', '13.AD.96', '13.AD.96', 
+											'13.AD.96'], 
+					'Entrance Doorway'	: ['13.AD.96', '13.AD.96', '13.AD.96'], 
+					'Under Cabinet Light Icon Unit': ['13.AD.96'] }
+
+			"""
 			data = {}
 			devices_xml = self.fetch_xml_page (self.server_address + r'/insteonlinks/')
 			root = devices_xml.getroot()
 			for subnode in root.getchildren():
-				data [subnode.text] = self.server_address + '%s' % subnode.get ('href')
+				device_info = self.get_device_by_name ( subnode.text)
+				device_addresses = []
+	
+				device_xml_page_url = self.server_address + r'/insteonlinks/%s' % subnode.get ('href').split("/")[-1]
+				device_root = self.fetch_xml_page ( device_xml_page_url )
+				for device_subnode in device_root.getiterator():
+					if device_subnode.tag.strip() == "address":
+						device_addresses.append ( device_subnode.text.strip() )
+				data [ device_info["name"] ] = device_addresses
 			return data
 
-# devices_xml = fetch_xml_page ('http://127.0.0.1:8176/insteonlinks/')
-# root = devices_xml.getroot()
-# for subnode in root.getchildren():
-# 	print 'http://127.0.0.1:8176%s' % subnode.get ('href')
-# 	child_data = fetch_xml_page ('http://127.0.0.1:8176%s' % subnode.get ('href'))
-# 	child_root = child_data.getroot ()
-# 	#print dir(child_root)
-# 	for x in child_root.getchildren():
-# 		for y in x.keys():
-# 			print "y - ",child_root.get(y)
 			
 def TranslateFromXml(xmlDev):
 	"""Used to translate from BeautifulSoup to dictionary format.
@@ -511,7 +511,7 @@ def TranslateFromXml(xmlDev):
 		tag_name = temp[0][1:255].strip()
 		if tag_name.find (".xml") <> -1:
 			#
-			#	The Action List, Variable List, and Device List, all have the URI encoded in the name of the 
+			#	The Action List, Variable List, and Device List, all have the URI URL_encoded in the name of the 
 			#	action list, variable list, or device list items.  This filters that out, and sets the value to
 			# 	none.  
 			#
@@ -520,32 +520,38 @@ def TranslateFromXml(xmlDev):
 			tag_value = None
 		else:
 			tag_value = temp[1].split("<")[0].strip()
-#		print "TN - %s,   TV - %s" % (tag_name, tag_value)
 		data [tag_name] = tag_value
 	return data
 			
 
 if __name__ == "__main__":      #   If run from the Command line
 	Indigo_server = Indigo_Restful_Server ()
-	Indigo_server.set_server (r"http://127.0.0.1:8176" )
-	Indigo_server.fetch_devices_from_indigo ()
-	Indigo_server.change_device_state_by_name ( device_name = "office lamp", status = 1)
-	Indigo_server.change_brightness_state_by_name ( device_name = "office lamp", brightness= 75)
-	Indigo_server.set_variable_by_name ("testing", 100)
-	print
-	print Indigo_server.get_variable_list ()
-	print
-	print Indigo_server.get_variable_by_name ( "Weather_Wind" )
-	print
-	print "AG: ",Indigo_server.get_actiongroup_list()
-	print
-	print Indigo_server.get_actiongroup_by_name ( "all lights on")
-	print
-	print Indigo_server.get_insteon_links ( )
-	print 
-	print Indigo_server.get_device_list ()
-	print
-	print Indigo_server.get_device_by_name ( "irrmaster pro")
+#	Indigo_server.set_server (r"http://127.0.0.1:8176" )
+#	Indigo_server.set_server (r"http://192.168.1.110:8080" )
+#	Indigo_server.set_server_authentication ( "test", "test")
+#	print	Indigo_server.return_device_from_addrstr ( "00.02.98" )
+#	print	Indigo_server.return_device_from_addrstr ( "a1" )
+	print 	"Links - ",Indigo_server.get_insteon_links ()
+#	Indigo_server.fetch_devices_from_indigo ()
+# 	Indigo_server.change_device_state_by_name ( device_name = "office lamp", status = 1)
+# 	Indigo_server.change_brightness_state_by_name ( device_name = "office lamp", brightness= 75)
+# 	Indigo_server.set_variable_by_name ("testing", 100)
+# 	print
+# 	print Indigo_server.get_variable_list ()
+# 	print
+# 	print Indigo_server.get_variable_by_name ( "Weather_Wind" )
+# 	print
+# 	print "AG: ",Indigo_server.get_actiongroup_list()
+# 	print
+# 	print Indigo_server.get_actiongroup_by_name ( "all lights on")
+# 	print
+# 	print Indigo_server.get_insteon_links ( )
+# 	print 
+# 	print Indigo_server.get_device_list ()
+# 	print
+# 	print "ir - ",Indigo_server.get_device_by_name ( "irrmaster pro")
+# 	print "ir - ",Indigo_server.get_device_by_name ( "Under Cabinet Light Icon Unit")
+	
 	#print Indigo_server.insteon_devices
 	#for x in Indigo_server.insteon_devices.keys():
 	#	print x, " - Insteon"

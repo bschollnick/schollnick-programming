@@ -82,28 +82,13 @@ Inputs&nbsp;-<br>
 Outputs&nbsp;-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None</tt></dd></dl>
 
-<dl><dt><a name="Indigo_Restful_Server-fetch_devices_from_indigo"><strong>fetch_devices_from_indigo</strong></a>(self, ignore_filter<font color="#909090">=['']</font>)</dt><dd><tt>Depreciated,&nbsp;do&nbsp;not&nbsp;use.<br>
-&nbsp;<br>
-Inputs:&nbsp;<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ignore_filter&nbsp;-&nbsp;the&nbsp;Insteon&nbsp;or&nbsp;X10&nbsp;addresses&nbsp;to&nbsp;filter&nbsp;out&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-&nbsp;<br>
-Outputs:<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None,&nbsp;populates&nbsp;the&nbsp;insteon_devices&nbsp;&amp;&nbsp;x10_devices&nbsp;of&nbsp;the&nbsp;<a href="#Indigo_Restful_Server">Indigo_Restful_Server</a>&nbsp;<a href="__builtin__.html#object">object</a>.&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;insteon_devices&nbsp;&amp;&nbsp;x10_devices&nbsp;are&nbsp;a&nbsp;list&nbsp;of&nbsp;device&nbsp;dictionarys.&nbsp;&nbsp;The&nbsp;dictionary&nbsp;contains&nbsp;the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;device&nbsp;data&nbsp;from&nbsp;the&nbsp;server.<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Depending&nbsp;on&nbsp;the&nbsp;device,&nbsp;this&nbsp;data&nbsp;will&nbsp;be&nbsp;different&nbsp;(eg,&nbsp;The&nbsp;Thermostat&nbsp;Adapter&nbsp;will&nbsp;not&nbsp;have&nbsp;the&nbsp;same&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;that&nbsp;an&nbsp;ApplianceLinc&nbsp;has.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Replaced&nbsp;by&nbsp;get_device_by_name,&nbsp;and&nbsp;get_device_list.</tt></dd></dl>
-
 <dl><dt><a name="Indigo_Restful_Server-fetch_web_page"><strong>fetch_web_page</strong></a>(self, web_url)</dt><dd><tt>Wrapper&nbsp;around&nbsp;the&nbsp;urllib.urlopen&nbsp;call,&nbsp;that&nbsp;reads&nbsp;the&nbsp;web_url.&nbsp;&nbsp;<br>
 &nbsp;<br>
 Intended&nbsp;for&nbsp;Internal&nbsp;use&nbsp;only.</tt></dd></dl>
 
-<dl><dt><a name="Indigo_Restful_Server-fetch_xml_page"><strong>fetch_xml_page</strong></a>(self, url_to_open)</dt></dl>
+<dl><dt><a name="Indigo_Restful_Server-fetch_xml_page"><strong>fetch_xml_page</strong></a>(self, url_to_open)</dt><dd><tt>Wrapper&nbsp;around&nbsp;the&nbsp;urllib.urlopen&nbsp;call,&nbsp;that&nbsp;reads&nbsp;the&nbsp;web_url.&nbsp;&nbsp;<br>
+&nbsp;<br>
+Intended&nbsp;for&nbsp;Internal&nbsp;use&nbsp;only.</tt></dd></dl>
 
 <dl><dt><a name="Indigo_Restful_Server-get_actiongroup_by_name"><strong>get_actiongroup_by_name</strong></a>(self, action_name)</dt><dd><tt>Inputs:<br>
 &nbsp;<br>
@@ -195,15 +180,6 @@ Output&nbsp;-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;Logic&nbsp;is&nbsp;that&nbsp;Insteon&nbsp;addresses&nbsp;are&nbsp;more&nbsp;than&nbsp;3&nbsp;characters&nbsp;long.</tt></dd></dl>
 
-<dl><dt><a name="Indigo_Restful_Server-map_device_to_dict"><strong>map_device_to_dict</strong></a>(self, web_data)</dt><dd><tt>This&nbsp;is&nbsp;used&nbsp;in&nbsp;the&nbsp;conversion&nbsp;of&nbsp;the&nbsp;text&nbsp;based&nbsp;devicelist&nbsp;call,&nbsp;to&nbsp;create&nbsp;the&nbsp;<br>
-dictionary&nbsp;of&nbsp;values.<br>
-&nbsp;<br>
-Input&nbsp;-&nbsp;text&nbsp;version&nbsp;of&nbsp;a&nbsp;device<br>
-&nbsp;<br>
-Output&nbsp;-&nbsp;a&nbsp;Dictionary&nbsp;built&nbsp;with&nbsp;the&nbsp;field&nbsp;name&nbsp;/&nbsp;values&nbsp;for&nbsp;the&nbsp;device.<br>
-&nbsp;<br>
-This&nbsp;is&nbsp;depreciated,&nbsp;and&nbsp;will&nbsp;be&nbsp;eliminated&nbsp;after&nbsp;rewriting&nbsp;the&nbsp;fetch_devicelist&nbsp;call.</tt></dd></dl>
-
 <dl><dt><a name="Indigo_Restful_Server-return_device_from_addrstr"><strong>return_device_from_addrstr</strong></a>(self, addrstr)</dt><dd><tt>Inputs:<br>
 &nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;addrstr&nbsp;-&nbsp;X10&nbsp;Address,&nbsp;or&nbsp;Insteon&nbsp;Address&nbsp;to&nbsp;match.&nbsp;&nbsp;Case&nbsp;Insensitive.<br>
@@ -216,28 +192,6 @@ When&nbsp;populated,&nbsp;the&nbsp;address&nbsp;string&nbsp;passed&nbsp;in&nbsp;
 device&nbsp;dictionary&nbsp;will&nbsp;be&nbsp;returned.<br>
 &nbsp;<br>
 If&nbsp;not&nbsp;found/matched,&nbsp;then&nbsp;a&nbsp;NONE&nbsp;will&nbsp;be&nbsp;returned.</tt></dd></dl>
-
-<dl><dt><a name="Indigo_Restful_Server-return_device_from_insteonaddr"><strong>return_device_from_insteonaddr</strong></a>(self, devdict)</dt><dd><tt>This&nbsp;will&nbsp;return&nbsp;a&nbsp;device&nbsp;dictionary&nbsp;from&nbsp;an&nbsp;insteon&nbsp;address.<br>
-&nbsp;<br>
-Input&nbsp;-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;devdict&nbsp;-&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;insteon&nbsp;devices&nbsp;(to&nbsp;search&nbsp;through)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-Output&nbsp;-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;device&nbsp;that&nbsp;matches&nbsp;the&nbsp;address,&nbsp;or&nbsp;None<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-Needs&nbsp;rewrite,&nbsp;this&nbsp;should&nbsp;search&nbsp;the&nbsp;self&nbsp;instance.<br>
-(This&nbsp;is&nbsp;used&nbsp;by&nbsp;the&nbsp;fetch_devicelist&nbsp;function)</tt></dd></dl>
-
-<dl><dt><a name="Indigo_Restful_Server-return_device_from_x10_addr"><strong>return_device_from_x10_addr</strong></a>(self, devdict)</dt><dd><tt>This&nbsp;will&nbsp;return&nbsp;a&nbsp;device&nbsp;dictionary&nbsp;from&nbsp;an&nbsp;X10&nbsp;address.<br>
-&nbsp;<br>
-Input&nbsp;-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;devdict&nbsp;-&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;X10&nbsp;devices&nbsp;(to&nbsp;search&nbsp;through)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-Output&nbsp;-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;device&nbsp;that&nbsp;matches&nbsp;the&nbsp;address,&nbsp;or&nbsp;None<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-Needs&nbsp;rewrite,&nbsp;this&nbsp;should&nbsp;search&nbsp;the&nbsp;self&nbsp;instance.<br>
-(This&nbsp;is&nbsp;used&nbsp;by&nbsp;the&nbsp;fetch_devicelist&nbsp;function)</tt></dd></dl>
 
 <dl><dt><a name="Indigo_Restful_Server-return_device_type"><strong>return_device_type</strong></a>(self, devdict)</dt><dd><tt>This&nbsp;will&nbsp;return&nbsp;the&nbsp;devices&nbsp;Type.<br>
 &nbsp;<br>
@@ -259,6 +213,9 @@ Inputs:<br>
 Output:<br>
 &nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Indigo_Restful_Server-set_server_authentication"><strong>set_server_authentication</strong></a>(self, username, password)</dt><dd><tt>Configure&nbsp;urllib2&nbsp;to&nbsp;use&nbsp;the&nbsp;username&nbsp;and&nbsp;password&nbsp;that&nbsp;is&nbsp;passed&nbsp;into&nbsp;this&nbsp;function.<br>
+Only&nbsp;needed&nbsp;if&nbsp;Indigo&nbsp;is&nbsp;setup&nbsp;to&nbsp;use&nbsp;password&nbsp;authentication.</tt></dd></dl>
 
 <dl><dt><a name="Indigo_Restful_Server-set_thermostat_fan_mode"><strong>set_thermostat_fan_mode</strong></a>(device_name<font color="#909090">=None</font>, mode<font color="#909090">=0</font>)</dt><dd><tt>Set&nbsp;an&nbsp;thermostat&nbsp;Fan&nbsp;mode.<br>
 &nbsp;<br>
