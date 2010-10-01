@@ -337,18 +337,18 @@ class 	Indigo_Restful_Server (object):
 		#
 		#
 		
-		def		set_variable_by_name  ( self, variable_name, new_value = 0):
+		def		set_variable_by_name  ( self, variable_name, new_value = ""):
 			"""Set a variable's value.
 			
 			Input - 
 					variable_name 	- The Variable's Name
-					new_value 		- The value to set the variable to.
+					new_value 		- The value to set the variable to.  (The value is a string)
 					
 			Output - None
 			
 			Note, the Variable has to previously exist in the variable list.  If it does not, Indigo will not create/add it.
 			"""
-			self.fetch_web_page ( self.server_address + r"/variables/%s?_method=put&value=%i" % (variable_name.replace(" ", "%20"), new_value) )
+			self.fetch_web_page ( self.server_address + r"/variables/%s?_method=put&value=%s" % (variable_name.replace(" ", "%20"), new_value) )
 
 
 
@@ -531,7 +531,7 @@ if __name__ == "__main__":      #   If run from the Command line
 #	Indigo_server.set_server_authentication ( "test", "test")
 #	print	Indigo_server.return_device_from_addrstr ( "00.02.98" )
 #	print	Indigo_server.return_device_from_addrstr ( "a1" )
-	print 	"Links - ",Indigo_server.get_insteon_links ()
+#	print 	"Links - ",Indigo_server.get_insteon_links ()
 #	Indigo_server.fetch_devices_from_indigo ()
 # 	Indigo_server.change_device_state_by_name ( device_name = "office lamp", status = 1)
 # 	Indigo_server.change_brightness_state_by_name ( device_name = "office lamp", brightness= 75)
